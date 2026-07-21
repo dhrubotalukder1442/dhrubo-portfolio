@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dhrubo Talukder — Full-Stack Developer &amp; ML Engineer</title>
+<meta name="description" content="Portfolio of Dhrubo Talukder — Full-Stack Developer, Data Analyst, ML Engineer based in Dhaka, Bangladesh." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg:#0B0F17;
+    --surface:#121826;
+    --surface-2:#161E2E;
+    --border:#232C3D;
+    --text:#E7EBF2;
+    --text-muted:#8B96A8;
+    --text-dim:#5A6579;
+    --accent:#4FA8FF;
+    --accent-dim:#2E5F94;
+    --accent-2:#E8A33D;
+    --success:#35C48F;
+  }
+  *{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+  }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'IBM Plex Mono',monospace;}
+  .text-muted{color:var(--text-muted);}
+  .text-dim{color:var(--text-dim);}
+  .text-accent{color:var(--accent);}
+  .bg-surface{background:var(--surface);}
+  .bg-surface-2{background:var(--surface-2);}
+  .border-hair{border-color:var(--border);}
+  ::selection{background:var(--accent-dim);color:#fff;}
+
+  .grid-bg{
+    background-image:
+      linear-gradient(to right, rgba(79,168,255,0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(79,168,255,0.045) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+
+  .cursor-blink{
+    display:inline-block;width:9px;height:1.1em;background:var(--accent);
+    margin-left:6px;vertical-align:-2px;
+    animation:blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .status-dot{
+    width:8px;height:8px;border-radius:999px;background:var(--success);
+    box-shadow:0 0 0 3px rgba(53,196,143,0.15);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 3px rgba(53,196,143,0.15);}
+    50%{box-shadow:0 0 0 5px rgba(53,196,143,0.28);}
+  }
+
+  .nav-link{
+    color:var(--text-dim);
+    transition:color .15s ease, border-color .15s ease;
+    border-left:2px solid transparent;
+  }
+  .nav-link:hover, .nav-link.active{
+    color:var(--text);
+    border-left-color:var(--accent);
+  }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .card:hover{
+    border-color:var(--accent-dim);
+    transform:translateY(-2px);
+  }
+
+  .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:.02em;
+    color:var(--accent);
+    background:rgba(79,168,255,0.08);
+    border:1px solid rgba(79,168,255,0.22);
+    padding:2px 8px;
+    border-radius:4px;
+    white-space:nowrap;
+  }
+
+  .badge-live{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--success);
+    background:rgba(53,196,143,0.1);
+    border:1px solid rgba(53,196,143,0.3);
+    padding:2px 8px;
+    border-radius:4px;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    color:var(--accent);
+    text-transform:uppercase;
+  }
+
+  .divider{
+    height:1px;
+    background:linear-gradient(to right, var(--border), transparent);
+  }
+
+  #sidebar{ transition: transform .25s ease; }
+  @media (max-width: 1023px){
+    #sidebar{
+      position:fixed; inset:0 auto 0 0; width:280px; z-index:50;
+      transform:translateX(-100%);
+    }
+    #sidebar.open{ transform:translateX(0); }
+    #overlay{ display:none; }
+    #overlay.open{ display:block; }
+  }
+
+  .scrollbar-thin::-webkit-scrollbar{width:6px;}
+  .scrollbar-thin::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+
+  .skeleton{
+    background:linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%);
+    background-size:200% 100%;
+    animation:shimmer 1.4s infinite;
+  }
+  @keyframes shimmer{
+    0%{background-position:200% 0;}
+    100%{background-position:-200% 0;}
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- Mobile top bar -->
+<div class="lg:hidden sticky top-0 z-40 flex items-center justify-between px-5 py-4 bg-surface border-b border-hair">
+  <div class="flex items-center gap-2">
+    <span class="status-dot"></span>
+    <span class="font-display font-semibold text-sm">DHRUBO TALUKDER</span>
+  </div>
+  <button id="menuBtn" class="font-mono text-xs border border-hair rounded px-3 py-1.5 text-muted">MENU</button>
+</div>
+<div id="overlay" class="lg:hidden fixed inset-0 bg-black/60 z-40"></div>
+
+<div class="lg:flex">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="lg:w-[300px] lg:flex-shrink-0 bg-surface border-r border-hair lg:h-screen lg:sticky lg:top-0 flex flex-col justify-between">
+    <div class="p-8 overflow-y-auto scrollbar-thin">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="status-dot"></span>
+        <span class="font-mono text-[11px] text-muted tracking-wider">AVAILABLE FOR HIRE</span>
+      </div>
+      <h1 class="font-display text-2xl font-semibold mt-4 leading-tight">Dhrubo<br/>Talukder</h1>
+      <p class="font-mono text-xs text-muted mt-3 leading-relaxed">
+        Full-Stack Developer<br/>Data Analyst · ML Engineer
+      </p>
+
+      <div class="divider my-6"></div>
+
+      <nav class="flex flex-col gap-1 text-sm font-medium">
+        <a href="#about" class="nav-link px-3 py-2">01 · About</a>
+        <a href="#skills" class="nav-link px-3 py-2">02 · Skills</a>
+        <a href="#experience" class="nav-link px-3 py-2">03 · Experience</a>
+        <a href="#projects" class="nav-link px-3 py-2">04 · Projects</a>
+        <a href="#github" class="nav-link px-3 py-2">05 · GitHub Feed</a>
+        <a href="#certifications" class="nav-link px-3 py-2">06 · Certifications</a>
+        <a href="#contact" class="nav-link px-3 py-2">07 · Contact</a>
+      </nav>
+
+      <div class="divider my-6"></div>
+
+      <div class="font-mono text-[11px] text-dim space-y-1">
+        <div id="clock">--:--:-- GMT+6</div>
+        <div>Dhaka, Bangladesh</div>
+      </div>
+    </div>
+
+    <div class="p-8 border-t border-hair">
+      <div class="flex gap-3 text-muted">
+        <a href="https://github.com/dhrubotalukder1442" target="_blank" rel="noopener" class="hover:text-accent transition-colors" aria-label="GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 4.98 3.23 9.2 7.72 10.69.56.1.76-.24.76-.54 0-.27-.01-1.16-.02-2.1-3.14.68-3.8-1.34-3.8-1.34-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.11 1.15a10.8 10.8 0 0 1 5.66 0c2.16-1.45 3.11-1.15 3.11-1.15.61 1.55.23 2.7.11 2.97.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.76 1.04.76 2.1 0 1.52-.01 2.74-.01 3.11 0 .3.2.65.77.54A11.03 11.03 0 0 0 23.02 11.5C23.02 5.24 18.27.5 12 .5Z"/></svg>
+        </a>
+        <a href="mailto:dhrubot1442@gmail.com" class="hover:text-accent transition-colors" aria-label="Email">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+        </a>
+        <a href="#" target="_blank" rel="noopener" class="hover:text-accent transition-colors" aria-label="LinkedIn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45Z"/></svg>
+        </a>
+      </div>
+      <p class="font-mono text-[10.5px] text-dim mt-4">+8801615-823129</p>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 min-w-0">
+
+    <!-- HERO -->
+    <section class="grid-bg px-6 sm:px-12 lg:px-16 pt-20 pb-24 border-b border-hair">
+      <div class="font-mono text-xs text-dim mb-6">~/portfolio $ whoami</div>
+      <h2 class="font-display text-4xl sm:text-6xl font-semibold leading-[1.08] max-w-3xl">
+        I build systems people
+        <span class="text-accent">trust with their data</span><span class="cursor-blink"></span>
+      </h2>
+      <p class="text-muted max-w-xl mt-6 leading-relaxed">
+        Final-year CSE student turning production-grade web platforms and ML pipelines —
+        the kind with real auth, rate limiting, and payment flows, not tutorial demos.
+        Currently shipping full-stack apps with Next.js &amp; Node, and data pipelines with Python.
+      </p>
+      <div class="flex flex-wrap gap-3 mt-9">
+        <a href="#projects" class="font-mono text-xs px-5 py-3 rounded bg-[var(--accent)] text-[#04101F] font-semibold hover:brightness-110 transition">VIEW PROJECTS →</a>
+        <a href="#contact" class="font-mono text-xs px-5 py-3 rounded border border-hair text-muted hover:text-white hover:border-accent transition">GET IN TOUCH</a>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 mt-14 max-w-lg">
+        <div>
+          <div class="font-display text-2xl font-semibold">6+</div>
+          <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Shipped Projects</div>
+        </div>
+        <div>
+          <div class="font-display text-2xl font-semibold">3.21</div>
+          <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">CGPA / 4.00</div>
+        </div>
+        <div>
+          <div class="font-display text-2xl font-semibold">Sep '26</div>
+          <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Graduating</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+      <div class="eyebrow mb-4">01 · About</div>
+      <div class="grid lg:grid-cols-3 gap-10">
+        <h3 class="font-display text-2xl font-semibold lg:col-span-1">
+          A developer who reads the error log before asking for help.
+        </h3>
+        <div class="lg:col-span-2 text-muted leading-relaxed space-y-4">
+          <p>
+            I'm a final-year Computer Science &amp; Engineering student at IUBAT, Dhaka, graduating
+            September 2026. My work sits at the intersection of full-stack web development and applied
+            machine learning — I like building things that touch real users and hold up under real load.
+          </p>
+          <p>
+            My centerpiece project, FixNext Sheba, taught me more about production concerns —
+            authentication, rate limiting, payment integration, real-time systems — than any course did.
+            On the data side, I've built ML classification pipelines and BI dashboards that turn raw
+            numbers into decisions.
+          </p>
+          <p>
+            I'm currently looking for internship or entry-level opportunities where I can keep learning
+            from experienced engineers while contributing to real products.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+      <div class="eyebrow mb-4">02 · Skills</div>
+      <h3 class="font-display text-2xl font-semibold mb-10">Stack &amp; tools</h3>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="skillsGrid">
+        <!-- filled by JS -->
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+      <div class="eyebrow mb-4">03 · Experience</div>
+      <h3 class="font-display text-2xl font-semibold mb-10">Where I've worked</h3>
+
+      <div class="space-y-8">
+        <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
+          <div class="font-mono text-xs text-dim pt-1">OCT — DEC 2025</div>
+          <div class="border-l border-hair pl-6">
+            <h4 class="font-display font-semibold text-lg">Intern — Source Expert</h4>
+            <p class="text-dim text-sm mt-0.5">Mohakhali, Dhaka</p>
+            <ul class="text-muted text-sm mt-3 space-y-1.5 list-disc list-inside">
+              <li>Developed and styled an admin dashboard with Tailwind CSS, including a new sidebar module improving navigation and feature accessibility.</li>
+              <li>Built reusable Laravel Blade templates for Project Blade views, ensuring front-end consistency and long-term maintainability.</li>
+            </ul>
+            <div class="flex flex-wrap gap-2 mt-4">
+              <span class="tag">PHP</span><span class="tag">Laravel</span><span class="tag">Tailwind CSS</span><span class="tag">Blade</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
+          <div class="font-mono text-xs text-dim pt-1">2025</div>
+          <div class="border-l border-hair pl-6">
+            <h4 class="font-display font-semibold text-lg">Data Visualization Job Simulation</h4>
+            <p class="text-dim text-sm mt-0.5">Tata Group — via Forage (Virtual)</p>
+            <ul class="text-muted text-sm mt-3 space-y-1.5 list-disc list-inside">
+              <li>Designed executive dashboards translating complex datasets into actionable, C-suite-ready insights using Tableau.</li>
+            </ul>
+            <div class="flex flex-wrap gap-2 mt-4">
+              <span class="tag">Tableau</span><span class="tag">Data Viz</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+      <div class="eyebrow mb-4">04 · Projects</div>
+      <h3 class="font-display text-2xl font-semibold mb-10">Featured work</h3>
+
+      <div class="grid md:grid-cols-2 gap-6" id="projectsGrid">
+        <!-- filled by JS -->
+      </div>
+    </section>
+
+    <!-- GITHUB LIVE FEED -->
+    <section id="github" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+      <div class="eyebrow mb-4">05 · GitHub Feed</div>
+      <div class="flex items-baseline justify-between flex-wrap gap-3 mb-2">
+        <h3 class="font-display text-2xl font-semibold">Live from github.com/dhrubotalukder1442</h3>
+        <span class="font-mono text-[11px] text-dim" id="repoCount">fetching repos…</span>
+      </div>
+      <p class="text-muted text-sm mb-10 max-w-xl">Pulled directly from the GitHub API on page load — always in sync with what's actually pushed.</p>
+
+      <div id="repoGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="skeleton h-40 rounded-lg border border-hair"></div>
+        <div class="skeleton h-40 rounded-lg border border-hair"></div>
+        <div class="skeleton h-40 rounded-lg border border-hair"></div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certifications" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+      <div class="eyebrow mb-4">06 · Certifications</div>
+      <h3 class="font-display text-2xl font-semibold mb-10">Training &amp; certifications</h3>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card rounded-lg p-5">
+          <p class="font-medium text-sm">Python (Django) Training</p>
+          <p class="font-mono text-[11px] text-dim mt-1">EDGE / IUBAT</p>
+        </div>
+        <div class="card rounded-lg p-5">
+          <p class="font-medium text-sm">Data Analytics 1: Foundations</p>
+          <p class="font-mono text-[11px] text-dim mt-1">LinkedIn Learning</p>
+        </div>
+        <div class="card rounded-lg p-5">
+          <p class="font-medium text-sm">Intro to Career Skills in Data Analytics</p>
+          <p class="font-mono text-[11px] text-dim mt-1">LinkedIn Learning</p>
+        </div>
+        <div class="card rounded-lg p-5">
+          <p class="font-medium text-sm">Data Analysis Essentials</p>
+          <p class="font-mono text-[11px] text-dim mt-1">Cisco · Credly</p>
+        </div>
+        <div class="card rounded-lg p-5 sm:col-span-2">
+          <p class="font-medium text-sm">Data Visualisation: Empowering Business with Effective Insights</p>
+          <p class="font-mono text-[11px] text-dim mt-1">Tata Group · Forage</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="px-6 sm:px-12 lg:px-16 py-24">
+      <div class="eyebrow mb-4">07 · Contact</div>
+      <h3 class="font-display text-3xl sm:text-4xl font-semibold max-w-lg leading-tight">
+        Open to internships &amp; entry-level roles — let's talk.
+      </h3>
+      <div class="flex flex-wrap gap-4 mt-10">
+        <a href="mailto:dhrubot1442@gmail.com" class="font-mono text-sm px-6 py-4 rounded bg-[var(--accent)] text-[#04101F] font-semibold hover:brightness-110 transition">
+          dhrubot1442@gmail.com
+        </a>
+        <a href="tel:+8801615823129" class="font-mono text-sm px-6 py-4 rounded border border-hair text-muted hover:text-white hover:border-accent transition">
+          +880 1615-823129
+        </a>
+      </div>
+      <p class="font-mono text-[11px] text-dim mt-10">© 2026 Dhrubo Talukder · Dhaka, Bangladesh</p>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  // Mobile sidebar toggle
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const menuBtn = document.getElementById('menuBtn');
+  function toggleMenu(open){
+    sidebar.classList.toggle('open', open);
+    overlay.classList.toggle('open', open);
+  }
+  menuBtn?.addEventListener('click', () => toggleMenu(!sidebar.classList.contains('open')));
+  overlay?.addEventListener('click', () => toggleMenu(false));
+  document.querySelectorAll('#sidebar a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('main section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+        link?.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-40% 0px -50% 0px' });
+  sections.forEach(s => observer.observe(s));
+
+  // Dhaka clock
+  function updateClock(){
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
+    const hh = String(now.getHours()).padStart(2,'0');
+    const mm = String(now.getMinutes()).padStart(2,'0');
+    const ss = String(now.getSeconds()).padStart(2,'0');
+    document.getElementById('clock').textContent = `${hh}:${mm}:${ss} GMT+6`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ---- SKILLS DATA ----
+  const skills = [
+    { group: 'Languages', items: ['JavaScript','TypeScript','PHP','Java','Python','C','C++'] },
+    { group: 'Frontend', items: ['Next.js','React','HTML5','CSS3','Tailwind CSS'] },
+    { group: 'Backend', items: ['Node.js','Express.js','Django','Laravel','REST API'] },
+    { group: 'Databases', items: ['MongoDB','MySQL','SQL'] },
+    { group: 'Auth & Security', items: ['JWT','bcrypt','OTP','Rate Limiting','XSS/CSRF Prevention','NoSQL Injection Prevention'] },
+    { group: 'Data & BI', items: ['Tableau','Power BI','Pandas','NumPy','Matplotlib','Excel'] },
+    { group: 'ML / AI', items: ['scikit-learn','Keras','PyTorch','PCA','ADASYN','MLP','k-Fold CV'] },
+    { group: 'Tools', items: ['Git','DSA','OOP','System Design','Vercel','Netlify'] },
+  ];
+  const skillsGrid = document.getElementById('skillsGrid');
+  skillsGrid.innerHTML = skills.map(s => `
+    <div class="card rounded-lg p-5">
+      <p class="font-mono text-[11px] text-accent uppercase tracking-wide mb-3">${s.group}</p>
+      <div class="flex flex-wrap gap-2">
+        ${s.items.map(i => `<span class="tag">${i}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // ---- FEATURED PROJECTS DATA ----
+  const projects = [
+    {
+      name: 'FixNext Sheba',
+      subtitle: 'Multi-role home services booking platform',
+      live: true,
+      year: '2025',
+      tech: ['Next.js','React','MongoDB','Node.js','JWT','bcrypt','Pusher','SSLCommerz'],
+      features: [
+        'Three roles — user, serviceman, admin — each with a dedicated dashboard',
+        'JWT auth with OTP (TTL) verification and IP-based rate limiting',
+        'XSS and NoSQL injection prevention throughout the API layer',
+        'SSLCommerz payment gateway integration',
+        'Real-time chat and booking notifications via Pusher WebSockets',
+        'Bilingual EN / বাংলা interface with persisted language preference',
+      ],
+    },
+    {
+      name: 'Smart Waste Management & Disposal System',
+      subtitle: 'IoT-integrated waste tracking platform',
+      live: false,
+      year: '2025',
+      tech: ['JavaScript','Node.js','REST API','IoT Sensors'],
+      features: [
+        'Real-time IoT bin-fill monitoring',
+        'Automated route scheduling for collection',
+        'Disposal tracking with integrated payments',
+      ],
+    },
+    {
+      name: 'Breast Cancer Classification System',
+      subtitle: 'Supervised ML diagnostic pipeline',
+      live: false,
+      year: '2025',
+      tech: ['Python','scikit-learn','PCA','ADASYN','MLP'],
+      features: [
+        'PCA for dimensionality reduction on high-feature medical data',
+        'ADASYN to correct class imbalance in diagnostic outcomes',
+        'Evaluated with k-fold cross-validation — precision, recall, F1',
+      ],
+    },
+    {
+      name: 'E-Commerce Platform',
+      subtitle: 'MVC online store with admin inventory',
+      live: false,
+      year: '2024',
+      tech: ['PHP','Laravel','Blade','MySQL','MVC'],
+      features: [
+        'Product catalog, cart, and order management flow',
+        'User authentication and role-based access',
+        'Admin panel for inventory control',
+      ],
+    },
+    {
+      name: 'Bike Sales Dashboard & Diwali Sales Analysis',
+      subtitle: 'BI dashboard + exploratory data analysis',
+      live: false,
+      year: '2024',
+      tech: ['Tableau','Excel','Pandas','Matplotlib'],
+      features: [
+        'Tableau KPI dashboard tracking bike sales trends',
+        'EDA on Diwali retail data to surface top customer segments',
+        'Identified regional revenue drivers for the business team',
+      ],
+    },
+  ];
+  const projectsGrid = document.getElementById('projectsGrid');
+  projectsGrid.innerHTML = projects.map(p => `
+    <div class="card rounded-lg p-6 flex flex-col">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h4 class="font-display font-semibold text-lg">${p.name}</h4>
+          <p class="text-dim text-sm mt-0.5">${p.subtitle}</p>
+        </div>
+        ${p.live ? '<span class="badge-live flex-shrink-0">● LIVE</span>' : `<span class="font-mono text-[10.5px] text-dim flex-shrink-0">${p.year}</span>`}
+      </div>
+      <ul class="text-muted text-sm mt-4 space-y-1.5 list-disc list-inside flex-1">
+        ${p.features.map(f => `<li>${f}</li>`).join('')}
+      </ul>
+      <div class="flex flex-wrap gap-2 mt-5">
+        ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // ---- LIVE GITHUB FEED ----
+  const GH_USER = 'dhrubotalukder1442';
+  const repoGrid = document.getElementById('repoGrid');
+  const repoCount = document.getElementById('repoCount');
+
+  fetch(`https://api.github.com/users/${GH_USER}/repos?sort=updated&per_page=100`)
+    .then(res => {
+      if(!res.ok) throw new Error('GitHub API error: ' + res.status);
+      return res.json();
+    })
+    .then(repos => {
+      const visible = repos.filter(r => !r.fork);
+      repoCount.textContent = `${visible.length} repositor${visible.length === 1 ? 'y' : 'ies'}`;
+      if(visible.length === 0){
+        repoGrid.innerHTML = `<p class="text-muted text-sm">No public repositories found yet.</p>`;
+        return;
+      }
+      repoGrid.innerHTML = visible.map(r => `
+        <a href="${r.html_url}" target="_blank" rel="noopener" class="card rounded-lg p-5 flex flex-col group">
+          <div class="flex items-start justify-between gap-2">
+            <h4 class="font-mono text-sm font-medium group-hover:text-accent transition-colors truncate">${r.name}</h4>
+            <span class="font-mono text-[10.5px] text-dim flex-shrink-0">★ ${r.stargazers_count}</span>
+          </div>
+          <p class="text-muted text-xs mt-2 flex-1 leading-relaxed">${r.description ? r.description : 'No description provided.'}</p>
+          <div class="flex items-center justify-between mt-4">
+            <span class="tag">${r.language ? r.language : 'N/A'}</span>
+            <span class="font-mono text-[10px] text-dim">updated ${new Date(r.updated_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })}</span>
+          </div>
+        </a>
+      `).join('');
+    })
+    .catch(err => {
+      repoCount.textContent = 'unavailable';
+      repoGrid.innerHTML = `
+        <div class="card rounded-lg p-5 sm:col-span-2 lg:col-span-3">
+          <p class="text-muted text-sm">Couldn't load live repositories right now (GitHub API rate limit or network issue). Visit
+            <a href="https://github.com/${GH_USER}" target="_blank" rel="noopener" class="text-accent underline">github.com/${GH_USER}</a> directly.</p>
+        </div>`;
+      console.error(err);
+    });
+</script>
+</body>
+</html>
