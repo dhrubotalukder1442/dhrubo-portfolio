@@ -23,6 +23,7 @@
     --accent-2:#E8A33D;
     --success:#35C48F;
   }
+  html, body{ overflow-x: hidden; max-width: 100%; }
   *{scroll-behavior:smooth;}
   body{
     background:var(--bg);
@@ -57,7 +58,9 @@
     width:8px;height:8px;border-radius:999px;background:var(--success);
     box-shadow:0 0 0 3px rgba(53,196,143,0.15);
     animation:pulse 2s ease-in-out infinite;
+    flex-shrink:0;
   }
+  .status-dot.accent{background:var(--accent);box-shadow:0 0 0 3px rgba(79,168,255,0.15);}
   @keyframes pulse{
     0%,100%{box-shadow:0 0 0 3px rgba(53,196,143,0.15);}
     50%{box-shadow:0 0 0 5px rgba(53,196,143,0.28);}
@@ -65,22 +68,24 @@
 
   .nav-link{
     color:var(--text-dim);
-    transition:color .15s ease, border-color .15s ease;
+    transition:color .15s ease, border-color .15s ease, background .15s ease;
     border-left:2px solid transparent;
   }
   .nav-link:hover, .nav-link.active{
     color:var(--text);
     border-left-color:var(--accent);
+    background:rgba(79,168,255,0.05);
   }
 
   .card{
     background:var(--surface);
     border:1px solid var(--border);
-    transition:border-color .2s ease, transform .2s ease;
+    transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
   }
   .card:hover{
     border-color:var(--accent-dim);
     transform:translateY(-2px);
+    box-shadow:0 12px 24px -12px rgba(0,0,0,0.5);
   }
 
   .tag{
@@ -105,6 +110,21 @@
     border-radius:4px;
   }
 
+  .badge-code{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px;
+    color:var(--accent);
+    background:rgba(79,168,255,0.1);
+    border:1px solid rgba(79,168,255,0.3);
+    padding:2px 8px;
+    border-radius:4px;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    white-space:nowrap;
+  }
+  .badge-code:hover{ background:rgba(79,168,255,0.18); }
+
   .eyebrow{
     font-family:'IBM Plex Mono',monospace;
     font-size:12px;
@@ -116,6 +136,63 @@
   .divider{
     height:1px;
     background:linear-gradient(to right, var(--border), transparent);
+  }
+
+  .avatar-ring{
+    background: conic-gradient(from 180deg, var(--accent), var(--accent-2), var(--success), var(--accent));
+    padding:3px;
+    border-radius:999px;
+  }
+  .avatar-ring img{
+    display:block;
+    border-radius:999px;
+    border:3px solid var(--surface);
+    background:var(--surface);
+  }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+  }
+  .panel-header{
+    display:flex;align-items:center;gap:8px;
+    padding:10px 14px;
+    border-bottom:1px solid var(--border);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--text-dim);
+  }
+  .dot-row span{width:9px;height:9px;border-radius:999px;display:inline-block;}
+
+  .metric-bar{
+    height:5px;border-radius:99px;background:var(--surface-2);overflow:hidden;
+  }
+  .metric-bar > span{
+    display:block;height:100%;border-radius:99px;
+    background:linear-gradient(to right, var(--accent-dim), var(--accent));
+  }
+
+  .timeline-dot{
+    width:11px;height:11px;border-radius:999px;
+    background:var(--bg);
+    border:2px solid var(--accent);
+    position:absolute;left:-6.5px;top:4px;
+  }
+  .timeline-line{
+    position:absolute;left:-1px;top:16px;bottom:-32px;width:1px;
+    background:var(--border);
+  }
+
+  .check-item{
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .check-icon{
+    width:22px;height:22px;border-radius:6px;
+    background:rgba(53,196,143,0.1);
+    border:1px solid rgba(53,196,143,0.3);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:1px;
   }
 
   #sidebar{ transition: transform .25s ease; }
@@ -141,6 +218,37 @@
     0%{background-position:200% 0;}
     100%{background-position:-200% 0;}
   }
+
+  .accent-bar{ height:3px; background:linear-gradient(to right, var(--accent), transparent); }
+
+  /* Lightbox */
+  #lightbox{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(4,8,14,0.88);
+    display:none; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  #lightbox.open{ display:flex; }
+  #lightbox img{
+    max-width:min(90vw, 420px);
+    max-height:80vh;
+    border-radius:16px;
+    border:1px solid var(--border);
+    box-shadow:0 20px 60px -20px rgba(0,0,0,0.7);
+  }
+  #lightboxClose{
+    position:absolute; top:20px; right:20px;
+    width:40px; height:40px; border-radius:999px;
+    background:var(--surface); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-muted); cursor:pointer;
+  }
+  #lightboxClose:hover{ color:var(--text); border-color:var(--accent-dim); }
+
+  @media (max-width: 640px){
+    .eyebrow{ font-size:11px; }
+    h2.font-display{ line-height:1.15; }
+  }
 </style>
 </head>
 <body class="antialiased">
@@ -159,12 +267,17 @@
 
   <!-- SIDEBAR -->
   <aside id="sidebar" class="lg:w-[300px] lg:flex-shrink-0 bg-surface border-r border-hair lg:h-screen lg:sticky lg:top-0 flex flex-col justify-between">
-    <div class="p-8 overflow-y-auto scrollbar-thin">
-      <div class="flex items-center gap-2 mb-1">
+    <div class="p-6 sm:p-8 overflow-y-auto scrollbar-thin">
+
+      <button id="avatarBtn" class="avatar-ring w-20 h-20 block cursor-zoom-in hover:opacity-90 transition-opacity" aria-label="View full-size photo">
+        <img id="avatarImg" src="data:image/jpeg;base64,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" alt="Dhrubo Talukder" class="w-full h-full object-cover" width="80" height="80" />
+      </button>
+
+      <div class="flex items-center gap-2 mt-5 mb-1">
         <span class="status-dot"></span>
         <span class="font-mono text-[11px] text-muted tracking-wider">AVAILABLE FOR HIRE</span>
       </div>
-      <h1 class="font-display text-2xl font-semibold mt-4 leading-tight">Dhrubo<br/>Talukder</h1>
+      <h1 class="font-display text-2xl font-semibold mt-3 leading-tight">Dhrubo<br/>Talukder</h1>
       <p class="font-mono text-xs text-muted mt-3 leading-relaxed">
         Full-Stack Developer<br/>Data Analyst · ML Engineer
       </p>
@@ -172,13 +285,14 @@
       <div class="divider my-6"></div>
 
       <nav class="flex flex-col gap-1 text-sm font-medium">
-        <a href="#about" class="nav-link px-3 py-2">01 · About</a>
-        <a href="#skills" class="nav-link px-3 py-2">02 · Skills</a>
-        <a href="#experience" class="nav-link px-3 py-2">03 · Experience</a>
-        <a href="#projects" class="nav-link px-3 py-2">04 · Projects</a>
-        <a href="#github" class="nav-link px-3 py-2">05 · GitHub Feed</a>
-        <a href="#certifications" class="nav-link px-3 py-2">06 · Certifications</a>
-        <a href="#contact" class="nav-link px-3 py-2">07 · Contact</a>
+        <a href="#about" class="nav-link px-3 py-2 rounded">01 · About</a>
+        <a href="#education" class="nav-link px-3 py-2 rounded">02 · Education</a>
+        <a href="#skills" class="nav-link px-3 py-2 rounded">03 · Skills</a>
+        <a href="#experience" class="nav-link px-3 py-2 rounded">04 · Experience</a>
+        <a href="#projects" class="nav-link px-3 py-2 rounded">05 · Projects</a>
+        <a href="#github" class="nav-link px-3 py-2 rounded">06 · GitHub Feed</a>
+        <a href="#certifications" class="nav-link px-3 py-2 rounded">07 · Certifications</a>
+        <a href="#contact" class="nav-link px-3 py-2 rounded">08 · Contact</a>
       </nav>
 
       <div class="divider my-6"></div>
@@ -189,7 +303,7 @@
       </div>
     </div>
 
-    <div class="p-8 border-t border-hair">
+    <div class="p-6 sm:p-8 border-t border-hair">
       <div class="flex gap-3 text-muted">
         <a href="https://github.com/dhrubotalukder1442" target="_blank" rel="noopener" class="hover:text-accent transition-colors" aria-label="GitHub">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 4.98 3.23 9.2 7.72 10.69.56.1.76-.24.76-.54 0-.27-.01-1.16-.02-2.1-3.14.68-3.8-1.34-3.8-1.34-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.11 1.15a10.8 10.8 0 0 1 5.66 0c2.16-1.45 3.11-1.15 3.11-1.15.61 1.55.23 2.7.11 2.97.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.76 1.04.76 2.1 0 1.52-.01 2.74-.01 3.11 0 .3.2.65.77.54A11.03 11.03 0 0 0 23.02 11.5C23.02 5.24 18.27.5 12 .5Z"/></svg>
@@ -202,6 +316,7 @@
         </a>
       </div>
       <p class="font-mono text-[10.5px] text-dim mt-4">+8801615-823129</p>
+      <p class="font-mono text-[10.5px] text-accent mt-2">✈ Open to Remote / Relocate</p>
     </div>
   </aside>
 
@@ -209,40 +324,83 @@
   <main class="flex-1 min-w-0">
 
     <!-- HERO -->
-    <section class="grid-bg px-6 sm:px-12 lg:px-16 pt-20 pb-24 border-b border-hair">
-    
-      <h2 class="font-display text-4xl sm:text-6xl font-semibold leading-[1.08] max-w-3xl">
-        I build systems people
-        <span class="text-accent">trust with their data</span><span class="cursor-blink"></span>
-      </h2>
-      <p class="text-muted max-w-xl mt-6 leading-relaxed">
-        Final-year CSE student turning production-grade web platforms and ML pipelines —
-        the kind with real auth, rate limiting, and payment flows, not tutorial demos.
-        Currently shipping full-stack apps with Next.js &amp; Node, and data pipelines with Python.
-      </p>
-      <div class="flex flex-wrap gap-3 mt-9">
-        <a href="#projects" class="font-mono text-xs px-5 py-3 rounded bg-[var(--accent)] text-[#04101F] font-semibold hover:brightness-110 transition">VIEW PROJECTS →</a>
-        <a href="#contact" class="font-mono text-xs px-5 py-3 rounded border border-hair text-muted hover:text-white hover:border-accent transition">GET IN TOUCH</a>
-      </div>
+    <section class="grid-bg px-6 sm:px-12 lg:px-16 pt-14 sm:pt-20 pb-16 sm:pb-24 border-b border-hair">
+      <div class="grid lg:grid-cols-[1fr_320px] gap-12 items-start">
+        <div>
+          <h2 class="font-display text-3xl sm:text-5xl lg:text-6xl font-semibold leading-[1.12] max-w-3xl">
+            I build systems people
+            <span class="text-accent">trust with their data</span><span class="cursor-blink"></span>
+          </h2>
+          <p class="text-muted max-w-xl mt-6 leading-relaxed">
+            Final-year CSE student turning production-grade web platforms and ML pipelines —
+            the kind with real auth, rate limiting, and payment flows, not tutorial demos.
+            Currently shipping full-stack apps with Next.js &amp; Node, and data pipelines with Python.
+          </p>
+          <div class="flex flex-wrap gap-3 mt-9">
+            <a href="#projects" class="font-mono text-xs px-5 py-3 rounded bg-[var(--accent)] text-[#04101F] font-semibold hover:brightness-110 transition">VIEW PROJECTS →</a>
+            <a href="#contact" class="font-mono text-xs px-5 py-3 rounded border border-hair text-muted hover:text-white hover:border-accent transition">GET IN TOUCH</a>
+          </div>
 
-      <div class="grid grid-cols-3 gap-4 mt-14 max-w-lg">
-        <div>
-          <div class="font-display text-2xl font-semibold">6+</div>
-          <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Shipped Projects</div>
+          <div class="grid grid-cols-3 gap-3 sm:gap-4 mt-14 max-w-lg">
+            <div>
+              <div class="font-display text-2xl font-semibold">6+</div>
+              <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Shipped Projects</div>
+            </div>
+            <div>
+              <div class="font-display text-2xl font-semibold">3.21</div>
+              <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">CGPA / 4.00</div>
+            </div>
+            <div>
+              <div class="font-display text-2xl font-semibold">Sep '26</div>
+              <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Graduating</div>
+            </div>
+          </div>
         </div>
-        <div>
-          <div class="font-display text-2xl font-semibold">3.21</div>
-          <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">CGPA / 4.00</div>
-        </div>
-        <div>
-          <div class="font-display text-2xl font-semibold">Sep '26</div>
-          <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Graduating</div>
+
+        <!-- system status panel -->
+        <div class="panel overflow-hidden">
+          <div class="panel-header justify-between">
+            <div class="flex items-center gap-2">
+              <span class="dot-row flex gap-1.5">
+                <span style="background:#E8666B"></span><span style="background:#E8C34D"></span><span style="background:#3FD68E"></span>
+              </span>
+              <span class="ml-2">status.sh</span>
+            </div>
+          </div>
+          <div class="p-5 space-y-4">
+            <div>
+              <div class="flex justify-between font-mono text-[11px] mb-1.5">
+                <span class="text-dim">full-stack dev</span><span class="text-accent">92%</span>
+              </div>
+              <div class="metric-bar"><span style="width:92%"></span></div>
+            </div>
+            <div>
+              <div class="flex justify-between font-mono text-[11px] mb-1.5">
+                <span class="text-dim">ml / data analysis</span><span class="text-accent">78%</span>
+              </div>
+              <div class="metric-bar"><span style="width:78%"></span></div>
+            </div>
+            <div>
+              <div class="flex justify-between font-mono text-[11px] mb-1.5">
+                <span class="text-dim">systems &amp; security</span><span class="text-accent">70%</span>
+              </div>
+              <div class="metric-bar"><span style="width:70%"></span></div>
+            </div>
+            <div class="divider !bg-none border-t border-hair pt-4 mt-2">
+              <div class="flex items-center gap-2 font-mono text-[11px] text-muted">
+                <span class="status-dot"></span> deployment: <a href="https://fixnext-sheba.vercel.app/" target="_blank" rel="noopener" class="text-accent hover:underline">FixNext Sheba — live</a>
+              </div>
+              <div class="flex items-center gap-2 font-mono text-[11px] text-muted mt-2">
+                <span class="status-dot accent"></span> next milestone: <span class="text-accent">graduation, Sep 2026</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ABOUT -->
-    <section id="about" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
+    <section id="about" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
       <div class="eyebrow mb-4">01 · About</div>
       <div class="grid lg:grid-cols-3 gap-10">
         <h3 class="font-display text-2xl font-semibold lg:col-span-1">
@@ -268,25 +426,65 @@
       </div>
     </section>
 
+    <!-- EDUCATION -->
+    <section id="education" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">02 · Education</div>
+      <h3 class="font-display text-2xl font-semibold mb-10">Academic background</h3>
+
+      <div class="space-y-8">
+        <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
+          <div class="font-mono text-xs text-dim pt-1">2026 (EXPECTED)</div>
+          <div class="relative pl-6">
+            <span class="timeline-dot"></span>
+            <span class="timeline-line"></span>
+            <h4 class="font-display font-semibold text-lg">B.Sc. in Computer Science &amp; Engineering</h4>
+            <p class="text-dim text-sm mt-0.5">IUBAT — International University of Business Agriculture and Technology, Dhaka</p>
+            <p class="font-mono text-[11px] text-accent mt-2">GPA: 3.21 / 4.00</p>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
+          <div class="font-mono text-xs text-dim pt-1">2020</div>
+          <div class="relative pl-6">
+            <span class="timeline-dot"></span>
+            <span class="timeline-line"></span>
+            <h4 class="font-display font-semibold text-lg">HSC — Science</h4>
+            <p class="text-dim text-sm mt-0.5">Khilgaon Model College, Dhaka</p>
+            <p class="font-mono text-[11px] text-accent mt-2">GPA: 4.42 / 5.00</p>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
+          <div class="font-mono text-xs text-dim pt-1">2017</div>
+          <div class="relative pl-6">
+            <span class="timeline-dot"></span>
+            <h4 class="font-display font-semibold text-lg">SSC — Science</h4>
+            <p class="text-dim text-sm mt-0.5">Patharghata KM Secondary School</p>
+            <p class="font-mono text-[11px] text-accent mt-2">GPA: 4.14 / 5.00</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- SKILLS -->
-    <section id="skills" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
-      <div class="eyebrow mb-4">02 · Skills</div>
+    <section id="skills" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">03 · Skills</div>
       <h3 class="font-display text-2xl font-semibold mb-10">Stack &amp; tools</h3>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="skillsGrid">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5" id="skillsGrid">
         <!-- filled by JS -->
       </div>
     </section>
 
     <!-- EXPERIENCE -->
-    <section id="experience" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
-      <div class="eyebrow mb-4">03 · Experience</div>
+    <section id="experience" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">04 · Experience</div>
       <h3 class="font-display text-2xl font-semibold mb-10">Where I've worked</h3>
 
-      <div class="space-y-8">
+      <div class="space-y-12">
         <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
           <div class="font-mono text-xs text-dim pt-1">OCT — DEC 2025</div>
-          <div class="border-l border-hair pl-6">
+          <div class="relative pl-6">
+            <span class="timeline-dot"></span>
+            <span class="timeline-line"></span>
             <h4 class="font-display font-semibold text-lg">Intern — Source Expert</h4>
             <p class="text-dim text-sm mt-0.5">Mohakhali, Dhaka</p>
             <ul class="text-muted text-sm mt-3 space-y-1.5 list-disc list-inside">
@@ -301,7 +499,8 @@
 
         <div class="grid sm:grid-cols-[160px_1fr] gap-4 sm:gap-8">
           <div class="font-mono text-xs text-dim pt-1">2025</div>
-          <div class="border-l border-hair pl-6">
+          <div class="relative pl-6">
+            <span class="timeline-dot"></span>
             <h4 class="font-display font-semibold text-lg">Data Visualization Job Simulation</h4>
             <p class="text-dim text-sm mt-0.5">Tata Group — via Forage (Virtual)</p>
             <ul class="text-muted text-sm mt-3 space-y-1.5 list-disc list-inside">
@@ -316,18 +515,23 @@
     </section>
 
     <!-- PROJECTS -->
-    <section id="projects" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
-      <div class="eyebrow mb-4">04 · Projects</div>
+    <section id="projects" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">05 · Projects</div>
       <h3 class="font-display text-2xl font-semibold mb-10">Featured work</h3>
 
       <div class="grid md:grid-cols-2 gap-6" id="projectsGrid">
         <!-- filled by JS -->
       </div>
+
+      <h4 class="font-mono text-xs text-dim uppercase tracking-wide mt-14 mb-5">Additional data analysis projects</h4>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="miniProjectsGrid">
+        <!-- filled by JS -->
+      </div>
     </section>
 
     <!-- GITHUB LIVE FEED -->
-    <section id="github" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
-      <div class="eyebrow mb-4">05 · GitHub Feed</div>
+    <section id="github" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">06 · GitHub Feed</div>
       <div class="flex items-baseline justify-between flex-wrap gap-3 mb-2">
         <h3 class="font-display text-2xl font-semibold">Live from github.com/dhrubotalukder1442</h3>
         <span class="font-mono text-[11px] text-dim" id="repoCount">fetching repos…</span>
@@ -342,53 +546,111 @@
     </section>
 
     <!-- CERTIFICATIONS -->
-    <section id="certifications" class="px-6 sm:px-12 lg:px-16 py-20 border-b border-hair">
-      <div class="eyebrow mb-4">06 · Certifications</div>
+    <section id="certifications" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">07 · Certifications</div>
       <h3 class="font-display text-2xl font-semibold mb-10">Training &amp; certifications</h3>
 
       <div class="grid sm:grid-cols-2 gap-4">
-        <div class="card rounded-lg p-5">
-          <p class="font-medium text-sm">Python (Django) Training</p>
-          <p class="font-mono text-[11px] text-dim mt-1">EDGE / IUBAT</p>
+        <div class="card rounded-lg p-5 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Python (Django) Training</p>
+            <p class="font-mono text-[11px] text-dim mt-1">EDGE / IUBAT</p>
+          </div>
         </div>
-        <div class="card rounded-lg p-5">
-          <p class="font-medium text-sm">Data Analytics 1: Foundations</p>
-          <p class="font-mono text-[11px] text-dim mt-1">LinkedIn Learning</p>
+        <div class="card rounded-lg p-5 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Data Analytics 1: Foundations</p>
+            <p class="font-mono text-[11px] text-dim mt-1">LinkedIn Learning</p>
+          </div>
         </div>
-        <div class="card rounded-lg p-5">
-          <p class="font-medium text-sm">Intro to Career Skills in Data Analytics</p>
-          <p class="font-mono text-[11px] text-dim mt-1">LinkedIn Learning</p>
+        <div class="card rounded-lg p-5 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Intro to Career Skills in Data Analytics</p>
+            <p class="font-mono text-[11px] text-dim mt-1">LinkedIn Learning</p>
+          </div>
         </div>
-        <div class="card rounded-lg p-5">
-          <p class="font-medium text-sm">Data Analysis Essentials</p>
-          <p class="font-mono text-[11px] text-dim mt-1">Cisco · Credly</p>
+        <div class="card rounded-lg p-5 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Data Analysis Essentials</p>
+            <p class="font-mono text-[11px] text-dim mt-1">Cisco · Credly</p>
+          </div>
         </div>
-        <div class="card rounded-lg p-5 sm:col-span-2">
-          <p class="font-medium text-sm">Data Visualisation: Empowering Business with Effective Insights</p>
-          <p class="font-mono text-[11px] text-dim mt-1">Tata Group · Forage</p>
+        <div class="card rounded-lg p-5 sm:col-span-2 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Data Visualisation: Empowering Business with Effective Insights</p>
+            <p class="font-mono text-[11px] text-dim mt-1">Tata Group · Forage</p>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- CONTACT -->
-    <section id="contact" class="px-6 sm:px-12 lg:px-16 py-24">
-      <div class="eyebrow mb-4">07 · Contact</div>
-      <h3 class="font-display text-3xl sm:text-4xl font-semibold max-w-lg leading-tight">
-        Open to internships &amp; entry-level roles — let's talk.
-      </h3>
-      <div class="flex flex-wrap gap-4 mt-10">
-        <a href="mailto:dhrubot1442@gmail.com" class="font-mono text-sm px-6 py-4 rounded bg-[var(--accent)] text-[#04101F] font-semibold hover:brightness-110 transition">
-          dhrubot1442@gmail.com
-        </a>
-        <a href="tel:+8801615823129" class="font-mono text-sm px-6 py-4 rounded border border-hair text-muted hover:text-white hover:border-accent transition">
-          +880 1615-823129
-        </a>
+    <section id="contact" class="px-6 sm:px-12 lg:px-16 py-16 sm:py-24">
+      <div class="eyebrow mb-4">08 · Contact</div>
+      <div class="panel p-8 sm:p-10 grid-bg">
+        <div class="font-mono text-xs text-dim mb-4">~/portfolio $ contact --init</div>
+        <h3 class="font-display text-3xl sm:text-4xl font-semibold max-w-lg leading-tight">
+          Open to internships &amp; entry-level roles — let's talk.
+        </h3>
+        <div class="flex flex-wrap gap-4 mt-10">
+          <a href="mailto:dhrubot1442@gmail.com" class="font-mono text-sm px-6 py-4 rounded bg-[var(--accent)] text-[#04101F] font-semibold hover:brightness-110 transition">
+            dhrubot1442@gmail.com
+          </a>
+          <a href="tel:+8801615823129" class="font-mono text-sm px-6 py-4 rounded border border-hair text-muted hover:text-white hover:border-accent transition">
+            +880 1615-823129
+          </a>
+        </div>
       </div>
-      <p class="font-mono text-[11px] text-dim mt-10">© 2026 Dhrubo Talukder · Dhaka, Bangladesh</p>
+      <p class="font-mono text-[11px] text-dim mt-8">© 2026 Dhrubo Talukder · Dhaka, Bangladesh</p>
     </section>
 
   </main>
 </div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <div id="lightboxClose" aria-label="Close">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </div>
+  <img id="lightboxImg" src="" alt="Dhrubo Talukder — full size" />
+</div>
+
+<script>
+  // Lightbox for profile photo
+  const avatarBtn = document.getElementById('avatarBtn');
+  const avatarImg = document.getElementById('avatarImg');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('lightboxClose');
+  function openLightbox(){
+    lightboxImg.src = avatarImg.src;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  avatarBtn?.addEventListener('click', openLightbox);
+  lightboxClose?.addEventListener('click', closeLightbox);
+  lightbox?.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeLightbox(); });
+</script>
 
 <script>
   // Mobile sidebar toggle
@@ -440,11 +702,17 @@
     { group: 'Tools', items: ['Git','DSA','OOP','System Design','Vercel','Netlify'] },
   ];
   const skillsGrid = document.getElementById('skillsGrid');
-  skillsGrid.innerHTML = skills.map(s => `
-    <div class="card rounded-lg p-5">
-      <p class="font-mono text-[11px] text-accent uppercase tracking-wide mb-3">${s.group}</p>
-      <div class="flex flex-wrap gap-2">
-        ${s.items.map(i => `<span class="tag">${i}</span>`).join('')}
+  skillsGrid.innerHTML = skills.map((s, i) => `
+    <div class="card rounded-lg overflow-hidden">
+      <div class="accent-bar"></div>
+      <div class="p-5">
+        <div class="flex items-center justify-between mb-3">
+          <p class="font-mono text-[11px] text-accent uppercase tracking-wide">${s.group}</p>
+          <span class="font-mono text-[10px] text-dim">0${i+1}</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${s.items.map(i => `<span class="tag">${i}</span>`).join('')}
+        </div>
       </div>
     </div>
   `).join('');
@@ -455,11 +723,16 @@
       name: 'FixNext Sheba',
       subtitle: 'Multi-role home services booking platform',
       live: true,
+      url: 'https://fixnext-sheba.vercel.app/',
+      repos: [
+        { label: 'Source', url: 'https://github.com/dhrubotalukder1442/FIXNEXT-SHEBA' },
+      ],
       year: '2025',
-      tech: ['Next.js','React','MongoDB','Node.js','JWT','bcrypt','Pusher','SSLCommerz'],
+      tech: ['Next.js','React','MongoDB','Node.js','JWT','bcrypt','Nodemailer','Pusher','SSLCommerz'],
       features: [
-        'Three roles — user, serviceman, admin — each with a dedicated dashboard',
-        'JWT auth with OTP (TTL) verification and IP-based rate limiting',
+        'Role-based access for customers, servicemen, and admins in a single flexible MongoDB collection',
+        'JWT stored in HttpOnly cookies with SameSite/Secure flags (XSS &amp; CSRF-safe), bcrypt cost-12 hashing',
+        'Email OTP via Nodemailer/Gmail SMTP with 5-minute TTL auto-expiry, plus IP-based rate limiting',
         'XSS and NoSQL injection prevention throughout the API layer',
         'SSLCommerz payment gateway integration',
         'Real-time chat and booking notifications via Pusher WebSockets',
@@ -471,6 +744,10 @@
       subtitle: 'IoT-integrated waste tracking platform',
       live: false,
       year: '2025',
+      repos: [
+        { label: 'Backend', url: 'https://github.com/dhrubotalukder1442/Smart-Waste-Management-and-Disposal-System-backend' },
+        { label: 'Frontend', url: 'https://github.com/dhrubotalukder1442/Smart-Waste-Management-and-Disposal-System-frontend' },
+      ],
       tech: ['JavaScript','Node.js','REST API','IoT Sensors'],
       features: [
         'Real-time IoT bin-fill monitoring',
@@ -483,6 +760,9 @@
       subtitle: 'Supervised ML diagnostic pipeline',
       live: false,
       year: '2025',
+      repos: [
+        { label: 'Source', url: 'https://github.com/dhrubotalukder1442/bc-ultrasound-tl-lstm-ci' },
+      ],
       tech: ['Python','scikit-learn','PCA','ADASYN','MLP'],
       features: [
         'PCA for dimensionality reduction on high-feature medical data',
@@ -495,6 +775,9 @@
       subtitle: 'MVC online store with admin inventory',
       live: false,
       year: '2024',
+      repos: [
+        { label: 'Source', url: 'https://github.com/dhrubotalukder1442/ecommerce' },
+      ],
       tech: ['PHP','Laravel','Blade','MySQL','MVC'],
       features: [
         'Product catalog, cart, and order management flow',
@@ -507,6 +790,10 @@
       subtitle: 'BI dashboard + exploratory data analysis',
       live: false,
       year: '2024',
+      repos: [
+        { label: 'Bike Sales', url: 'https://github.com/dhrubotalukder1442/Bike-Sales-with-Pivot-Table-in-Excel' },
+        { label: 'Diwali Sales', url: 'https://github.com/dhrubotalukder1442/Python_Diwali_Sales_Analysis' },
+      ],
       tech: ['Tableau','Excel','Pandas','Matplotlib'],
       features: [
         'Tableau KPI dashboard tracking bike sales trends',
@@ -516,22 +803,47 @@
     },
   ];
   const projectsGrid = document.getElementById('projectsGrid');
+  const codeIcon = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 4.98 3.23 9.2 7.72 10.69.56.1.76-.24.76-.54 0-.27-.01-1.16-.02-2.1-3.14.68-3.8-1.34-3.8-1.34-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.11 1.15a10.8 10.8 0 0 1 5.66 0c2.16-1.45 3.11-1.15 3.11-1.15.61 1.55.23 2.7.11 2.97.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.76 1.04.76 2.1 0 1.52-.01 2.74-.01 3.11 0 .3.2.65.77.54A11.03 11.03 0 0 0 23.02 11.5C23.02 5.24 18.27.5 12 .5Z"/></svg>`;
   projectsGrid.innerHTML = projects.map(p => `
-    <div class="card rounded-lg p-6 flex flex-col">
-      <div class="flex items-start justify-between gap-3">
-        <div>
-          <h4 class="font-display font-semibold text-lg">${p.name}</h4>
-          <p class="text-dim text-sm mt-0.5">${p.subtitle}</p>
+    <div class="card rounded-lg overflow-hidden flex flex-col">
+      <div class="accent-bar" style="background:linear-gradient(to right, ${p.live ? 'var(--success)' : 'var(--accent)'}, transparent)"></div>
+      <div class="p-6 flex flex-col flex-1">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h4 class="font-display font-semibold text-lg">${p.url ? `<a href="${p.url}" target="_blank" rel="noopener" class="hover:text-accent transition-colors">${p.name}</a>` : p.name}</h4>
+            <p class="text-dim text-sm mt-0.5">${p.subtitle}</p>
+          </div>
+          ${p.live ? `<a href="${p.url || '#'}" target="_blank" rel="noopener" class="badge-live flex-shrink-0 hover:brightness-125 transition">● LIVE</a>` : `<span class="font-mono text-[10.5px] text-dim flex-shrink-0">${p.year}</span>`}
         </div>
-        ${p.live ? '<span class="badge-live flex-shrink-0">● LIVE</span>' : `<span class="font-mono text-[10.5px] text-dim flex-shrink-0">${p.year}</span>`}
-      </div>
-      <ul class="text-muted text-sm mt-4 space-y-1.5 list-disc list-inside flex-1">
-        ${p.features.map(f => `<li>${f}</li>`).join('')}
-      </ul>
-      <div class="flex flex-wrap gap-2 mt-5">
-        ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
+        <ul class="text-muted text-sm mt-4 space-y-1.5 list-disc list-inside flex-1">
+          ${p.features.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+        ${p.repos && p.repos.length ? `
+        <div class="flex flex-wrap gap-2 mt-5">
+          ${p.repos.map(r => `<a href="${r.url}" target="_blank" rel="noopener" class="badge-code transition">${codeIcon} ${r.label}</a>`).join('')}
+        </div>` : ''}
+        <div class="flex flex-wrap gap-2 mt-3">
+          ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>
       </div>
     </div>
+  `).join('');
+
+  // ---- ADDITIONAL DATA PROJECTS ----
+  const miniProjects = [
+    { name: 'Hollywood Most Profitable Stories', tech: ['Python','Pandas'], repo: 'https://github.com/dhrubotalukder1442/Hollywoods-Most-Profitable-Series' },
+    { name: 'Stock Market Performance Analysis', tech: ['Python','Pandas'], repo: 'https://github.com/dhrubotalukder1442/Stock-Market-Performance-Analysis-using-Python' },
+    { name: 'Online Retail Shop Data Analysis', tech: ['Python','Pandas'], repo: 'https://github.com/dhrubotalukder1442/online_shop' },
+  ];
+  const miniProjectsGrid = document.getElementById('miniProjectsGrid');
+  miniProjectsGrid.innerHTML = miniProjects.map(p => `
+    <a href="${p.repo}" target="_blank" rel="noopener" class="card rounded-lg p-4 flex items-center justify-between gap-3 hover:border-accent-dim">
+      <p class="text-sm font-medium">${p.name}</p>
+      <div class="flex gap-1.5 flex-shrink-0 items-center">
+        ${p.tech.map(t => `<span class="tag">${t}</span>`).join('')}
+        <span class="text-dim">${codeIcon}</span>
+      </div>
+    </a>
   `).join('');
 
   // ---- LIVE GITHUB FEED ----
