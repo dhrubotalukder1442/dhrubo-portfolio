@@ -50,21 +50,14 @@
   .cursor-blink{
     display:inline-block;width:9px;height:1.1em;background:var(--accent);
     margin-left:6px;vertical-align:-2px;
-    animation:blink 1.1s steps(1) infinite;
   }
-  @keyframes blink{50%{opacity:0;}}
 
   .status-dot{
     width:8px;height:8px;border-radius:999px;background:var(--success);
     box-shadow:0 0 0 3px rgba(53,196,143,0.15);
-    animation:pulse 2s ease-in-out infinite;
     flex-shrink:0;
   }
   .status-dot.accent{background:var(--accent);box-shadow:0 0 0 3px rgba(79,168,255,0.15);}
-  @keyframes pulse{
-    0%,100%{box-shadow:0 0 0 3px rgba(53,196,143,0.15);}
-    50%{box-shadow:0 0 0 5px rgba(53,196,143,0.28);}
-  }
 
   .nav-link{
     color:var(--text-dim);
@@ -85,12 +78,10 @@
   .card{
     background:var(--surface);
     border:1px solid var(--border);
-    transition:border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    will-change:transform;
   }
   .card:hover{
     border-color:var(--accent-dim);
-    transform:translateY(-2px);
-    box-shadow:0 12px 24px -12px rgba(0,0,0,0.5);
   }
 
   .tag{
@@ -128,7 +119,6 @@
     gap:4px;
     white-space:nowrap;
   }
-  .badge-code:hover{ background:rgba(79,168,255,0.18); }
 
   .eyebrow{
     font-family:'IBM Plex Mono',monospace;
@@ -176,6 +166,7 @@
   .metric-bar > span{
     display:block;height:100%;border-radius:99px;
     background:linear-gradient(to right, var(--accent-dim), var(--accent));
+    width:0%;
   }
 
   .timeline-dot{
@@ -200,7 +191,7 @@
     flex-shrink:0;margin-top:1px;
   }
 
-  #sidebar{ transition: transform .25s ease; }
+  #sidebar{ }
   @media (max-width: 1023px){
     #sidebar{
       position:fixed; inset:0 auto 0 0; width:280px; z-index:50;
@@ -228,11 +219,7 @@
   .skeleton{
     background:linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%);
     background-size:200% 100%;
-    animation:shimmer 1.4s infinite;
-  }
-  @keyframes shimmer{
-    0%{background-position:200% 0;}
-    100%{background-position:-200% 0;}
+    background-position:200% 0;
   }
 
   .accent-bar{ height:3px; background:linear-gradient(to right, var(--accent), transparent); }
@@ -306,11 +293,6 @@
     gap:6px;
     opacity:.7;
   }
-  .carousel-hint svg{ animation:hintBounce 1.6s ease-in-out infinite; }
-  @keyframes hintBounce{
-    0%,100%{ transform:translateY(0); }
-    50%{ transform:translateY(3px); }
-  }
   @media (max-width:640px){
     .projects-carousel-wrap{ height:480px; perspective:1200px; }
     .project-card-3d .feat-list{ max-height:96px; }
@@ -343,9 +325,9 @@
         <span class="status-dot"></span>
         <span class="font-mono text-[11px] text-muted tracking-wider">AVAILABLE FOR HIRE</span>
       </div>
-      <h1 class="font-display text-2xl font-semibold mt-3 leading-tight">Dhrubo<br/>Talukder</h1>
+      <h1 class="font-display text-2xl font-semibold mt-3 leading-tight">Dhrubo Talukder</h1>
       <p class="font-mono text-xs text-muted mt-3 leading-relaxed">
-        Full-Stack Developer<br/>Data Analyst · ML Engineer
+        Software Engineer<br>Full-Stack Developer<br/>Data Analyst · ML Engineer
       </p>
 
       <div class="divider my-6"></div>
@@ -358,7 +340,8 @@
         <a href="#projects" class="nav-link px-3 py-2 rounded">05 · Projects</a>
         <a href="#github" class="nav-link px-3 py-2 rounded">06 · GitHub Feed</a>
         <a href="#certifications" class="nav-link px-3 py-2 rounded">07 · Certifications</a>
-        <a href="#contact" class="nav-link px-3 py-2 rounded">08 · Contact</a>
+        <a href="#extracurricular" class="nav-link px-3 py-2 rounded">08 · Extracurricular</a>
+        <a href="#contact" class="nav-link px-3 py-2 rounded">09 · Contact</a>
       </nav>
 
       <div class="divider my-6"></div>
@@ -409,11 +392,11 @@
 
           <div class="grid grid-cols-3 gap-3 sm:gap-4 mt-14 max-w-lg">
             <div>
-              <div class="font-display text-2xl font-semibold">6+</div>
+              <div class="font-display text-2xl font-semibold" id="statProjects" data-count="6" data-suffix="+">0+</div>
               <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">Shipped Projects</div>
             </div>
             <div>
-              <div class="font-display text-2xl font-semibold">3.21</div>
+              <div class="font-display text-2xl font-semibold" id="statGpa" data-count="3.21" data-decimals="2">0.00</div>
               <div class="font-mono text-[10.5px] text-dim mt-1 uppercase tracking-wide">CGPA / 4.00</div>
             </div>
             <div>
@@ -438,19 +421,19 @@
               <div class="flex justify-between font-mono text-[11px] mb-1.5">
                 <span class="text-dim">full-stack dev</span><span class="text-accent">92%</span>
               </div>
-              <div class="metric-bar"><span style="width:92%"></span></div>
+              <div class="metric-bar"><span data-target="92"></span></div>
             </div>
             <div>
               <div class="flex justify-between font-mono text-[11px] mb-1.5">
                 <span class="text-dim">ml / data analysis</span><span class="text-accent">78%</span>
               </div>
-              <div class="metric-bar"><span style="width:78%"></span></div>
+              <div class="metric-bar"><span data-target="78"></span></div>
             </div>
             <div>
               <div class="flex justify-between font-mono text-[11px] mb-1.5">
                 <span class="text-dim">systems &amp; security</span><span class="text-accent">70%</span>
               </div>
-              <div class="metric-bar"><span style="width:70%"></span></div>
+              <div class="metric-bar"><span data-target="70"></span></div>
             </div>
             <div class="border-t border-hair pt-4 mt-2">
               <div class="flex items-center gap-2 font-mono text-[11px] text-muted">
@@ -592,7 +575,7 @@
         <div class="projects-carousel-track" id="projectsCarouselTrack">
           <!-- filled by JS -->
         </div>
-        <div class="carousel-hint font-mono text-[10.5px] text-dim">
+        <div class="carousel-hint font-mono text-[10.5px] text-dim" id="carouselHint">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M6 11l6-6 6 6M6 13l6 6 6-6"/></svg>
           scroll ↕ to rotate
         </div>
@@ -674,9 +657,36 @@
       </div>
     </section>
 
+    <!-- EXTRACURRICULAR -->
+    <section id="extracurricular" class="px-6 sm:px-12 lg:px-16 py-14 sm:py-20 border-b border-hair">
+      <div class="eyebrow mb-4">08 · Extracurricular</div>
+      <h3 class="font-display text-2xl font-semibold mb-10">Extracurricular &amp; volunteering</h3>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="card rounded-lg p-5 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Cadet Corporal — IUBAT BNCC Platoon, Dhaka</p>
+            <p class="font-mono text-[11px] text-dim mt-1">Jul 2022 – Jun 2025</p>
+            <p class="text-muted text-sm mt-2">Contributed to curriculum alignment, integrated 21st-century skills and implemented innovative teaching strategies.</p>
+          </div>
+        </div>
+        <div class="card rounded-lg p-5 check-item">
+          <div class="check-icon">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#35C48F" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <p class="font-medium text-sm">Member — Debate Forum, IUBAT</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CONTACT -->
     <section id="contact" class="px-6 sm:px-12 lg:px-16 py-16 sm:py-24">
-      <div class="eyebrow mb-4">08 · Contact</div>
+      <div class="eyebrow mb-4">09 · Contact</div>
       <div class="panel p-8 sm:p-10 grid-bg">
         <div class="font-mono text-xs text-dim mb-4">~/portfolio $ contact --init</div>
         <h3 class="font-display text-3xl sm:text-4xl font-semibold max-w-lg leading-tight">
@@ -705,7 +715,14 @@
   <img id="lightboxImg" src="" alt="Dhrubo Talukder — full size" />
 </div>
 
+<!-- GSAP core + ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+
 <script>
+  gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
   // Lightbox for profile photo
   const avatarBtn = document.getElementById('avatarBtn');
   const avatarImg = document.getElementById('avatarImg');
@@ -716,6 +733,7 @@
     lightboxImg.src = avatarImg.src;
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
+    gsap.fromTo(lightboxImg, { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: 'power2.out' });
   }
   function closeLightbox(){
     lightbox.classList.remove('open');
@@ -728,27 +746,77 @@
 </script>
 
 <script>
-  // Mobile sidebar toggle
+  // Mobile sidebar toggle — GSAP-driven slide instead of instant CSS transform
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('overlay');
   const menuBtn = document.getElementById('menuBtn');
+  gsap.set(sidebar, { xPercent: -100 });
   function toggleMenu(open){
     sidebar.classList.toggle('open', open);
     overlay.classList.toggle('open', open);
+    gsap.to(sidebar, { xPercent: open ? 0 : -100, duration: 0.45, ease: 'power3.out' });
+    gsap.to(overlay, { opacity: open ? 1 : 0, duration: 0.3, ease: 'power1.out' });
   }
+  // On desktop the sidebar is always visible — undo the mobile transform above lg breakpoint
+  function syncSidebarForViewport(){
+    if (window.innerWidth >= 1024) gsap.set(sidebar, { xPercent: 0 });
+    else if (!sidebar.classList.contains('open')) gsap.set(sidebar, { xPercent: -100 });
+  }
+  syncSidebarForViewport();
+  window.addEventListener('resize', syncSidebarForViewport);
+
   menuBtn?.addEventListener('click', () => toggleMenu(!sidebar.classList.contains('open')));
   overlay?.addEventListener('click', () => toggleMenu(false));
-  document.querySelectorAll('#sidebar a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
 
-  // Active nav highlight
+  // Nav links: smooth GSAP scroll to target section + close mobile menu
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const id = a.getAttribute('href');
+      const target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      toggleMenu(false);
+      const offset = window.innerWidth < 1024 ? 72 : 24;
+      gsap.to(window, {
+        duration: 0.9,
+        ease: 'power2.inOut',
+        scrollTo: { y: target, offsetY: offset }
+      });
+    });
+  });
+
+  // Active nav highlight + a sliding indicator bar that glides to the current section's link
   const sections = document.querySelectorAll('main section[id]');
   const navLinks = document.querySelectorAll('.nav-link');
+  const navEl = document.querySelector('#sidebar nav');
+  const indicator = document.createElement('div');
+  indicator.style.position = 'absolute';
+  indicator.style.left = '0';
+  indicator.style.width = '2px';
+  indicator.style.background = 'var(--accent)';
+  indicator.style.borderRadius = '2px';
+  indicator.style.pointerEvents = 'none';
+  if (navEl) {
+    navEl.style.position = 'relative';
+    navEl.appendChild(indicator);
+  }
+  function moveIndicatorTo(link){
+    if (!link || !navEl) return;
+    gsap.to(indicator, {
+      top: link.offsetTop,
+      height: link.offsetHeight,
+      opacity: 1,
+      duration: 0.4,
+      ease: 'power2.out'
+    });
+  }
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
         navLinks.forEach(l => l.classList.remove('active'));
         const link = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
         link?.classList.add('active');
+        moveIndicatorTo(link);
       }
     });
   }, { rootMargin: '-40% 0px -50% 0px' });
@@ -764,17 +832,175 @@
   }
   updateClock();
   setInterval(updateClock, 1000);
+</script>
 
+<script>
+  // ==========================================================
+  // GSAP: decorative loop animations (replaces old CSS @keyframes)
+  // ==========================================================
+
+  // 1) Hero cursor blink — was `@keyframes blink`
+  gsap.to('.cursor-blink', {
+    opacity: 0,
+    duration: 0.55,
+    repeat: -1,
+    yoyo: true,
+    ease: 'none'
+  });
+
+  // 2) Status dot pulse (glow ring) — was `@keyframes pulse`
+  gsap.utils.toArray('.status-dot').forEach(dot => {
+    const isAccent = dot.classList.contains('accent');
+    const color = isAccent ? '79,168,255' : '53,196,143';
+    gsap.to(dot, {
+      boxShadow: `0 0 0 6px rgba(${color},0.28)`,
+      duration: 1,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+  });
+
+  // 3) Skeleton shimmer (GitHub feed loading state) — was `@keyframes shimmer`
+  gsap.to('.skeleton', {
+    backgroundPosition: '-200% 0',
+    duration: 1.4,
+    repeat: -1,
+    ease: 'none'
+  });
+
+  // 4) "scroll ↕ to rotate" hint bounce — was `@keyframes hintBounce`
+  const hintArrow = document.querySelector('#carouselHint svg');
+  if (hintArrow) {
+    gsap.to(hintArrow, {
+      y: 3,
+      duration: 0.8,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    });
+  }
+
+  // 5) Hero metric bars — animate width in on scroll into view
+  gsap.utils.toArray('.metric-bar > span').forEach(bar => {
+    const target = bar.dataset.target || 0;
+    ScrollTrigger.create({
+      trigger: bar,
+      start: 'top 90%',
+      once: true,
+      onEnter: () => gsap.to(bar, { width: `${target}%`, duration: 1.1, ease: 'power2.out' })
+    });
+  });
+
+  // 6) Section entrance fade/rise — nice-to-have scroll reveal for each section (hero has its own timeline above, so skip it)
+  gsap.utils.toArray('main section[id]').forEach(section => {
+    gsap.from(section, {
+      opacity: 0,
+      y: 24,
+      duration: 0.6,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 85%',
+        toggleActions: 'play none none none'
+      }
+    });
+  });
+
+  // 7) Card hover lift — was CSS `.card:hover{ transform / box-shadow }` transition
+  document.addEventListener('mouseover', (e) => {
+    const card = e.target.closest('.card');
+    if (card && !card.dataset.gsapHoverBound) {
+      card.dataset.gsapHoverBound = '1';
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card, { y: -4, boxShadow: '0 12px 24px -12px rgba(0,0,0,0.5)', duration: 0.25, ease: 'power2.out' });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, { y: 0, boxShadow: '0 0px 0px 0px rgba(0,0,0,0)', duration: 0.25, ease: 'power2.out' });
+      });
+    }
+  });
+
+  // 8) Hero entrance — staggered reveal the moment the page loads
+  gsap.timeline({ defaults: { ease: 'power3.out' } })
+    .from('h2.font-display', { opacity: 0, y: 24, duration: 0.7 })
+    .from('section.grid-bg p.text-muted', { opacity: 0, y: 16, duration: 0.6 }, '-=0.4')
+    .from('section.grid-bg .flex.flex-wrap.gap-3 a', { opacity: 0, y: 12, duration: 0.5, stagger: 0.1 }, '-=0.35')
+    .from('section.grid-bg .grid-cols-3 > div', { opacity: 0, y: 12, duration: 0.5, stagger: 0.08 }, '-=0.3')
+    .from('.panel', { opacity: 0, x: 24, duration: 0.7 }, '-=0.6')
+    .from('#sidebar h1, #sidebar p.font-mono, #sidebar nav a, #sidebar .avatar-ring', {
+      opacity: 0, x: -16, duration: 0.5, stagger: 0.06
+    }, 0.1);
+
+  // 9) Hero stat count-up numbers
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || '0', 10);
+    const suffix = el.dataset.suffix || '';
+    const counter = { val: 0 };
+    gsap.to(counter, {
+      val: target,
+      duration: 1.4,
+      delay: 0.6,
+      ease: 'power2.out',
+      onUpdate: () => { el.textContent = counter.val.toFixed(decimals) + suffix; }
+    });
+  });
+
+  // 10) Timeline rows (Education & Experience) — slide in from left, staggered, as each scrolls into view
+  ScrollTrigger.batch('#education .space-y-8 > div, #experience .space-y-12 > div', {
+    start: 'top 88%',
+    onEnter: batch => gsap.from(batch, { opacity: 0, x: -30, duration: 0.6, stagger: 0.15, ease: 'power2.out' })
+  });
+  // timeline dots pop in slightly after their row
+  ScrollTrigger.batch('.timeline-dot', {
+    start: 'top 88%',
+    onEnter: batch => gsap.from(batch, { scale: 0, duration: 0.4, delay: 0.2, stagger: 0.15, ease: 'back.out(2)' })
+  });
+
+  // 11) Certification cards — pop in with their checkmarks
+  ScrollTrigger.batch('#certifications .check-item', {
+    start: 'top 90%',
+    onEnter: batch => gsap.from(batch, { opacity: 0, y: 18, duration: 0.5, stagger: 0.1, ease: 'power2.out' })
+  });
+  ScrollTrigger.batch('#certifications .check-icon', {
+    start: 'top 90%',
+    onEnter: batch => gsap.from(batch, { scale: 0, duration: 0.35, delay: 0.15, stagger: 0.1, ease: 'back.out(3)' })
+  });
+
+  // 11b) Extracurricular cards — same pop-in treatment
+  ScrollTrigger.batch('#extracurricular .check-item', {
+    start: 'top 90%',
+    onEnter: batch => gsap.from(batch, { opacity: 0, y: 18, duration: 0.5, stagger: 0.12, ease: 'power2.out' })
+  });
+  ScrollTrigger.batch('#extracurricular .check-icon', {
+    start: 'top 90%',
+    onEnter: batch => gsap.from(batch, { scale: 0, duration: 0.35, delay: 0.15, stagger: 0.12, ease: 'back.out(3)' })
+  });
+
+  // 12) Avatar hover pop + CTA / contact button hover pop
+  const avatarPop = document.getElementById('avatarBtn');
+  avatarPop?.addEventListener('mouseenter', () => gsap.to(avatarPop, { scale: 1.06, duration: 0.25, ease: 'power2.out' }));
+  avatarPop?.addEventListener('mouseleave', () => gsap.to(avatarPop, { scale: 1, duration: 0.25, ease: 'power2.out' }));
+
+  document.querySelectorAll('#contact a, section.grid-bg .flex.flex-wrap.gap-3 a').forEach(btn => {
+    btn.addEventListener('mouseenter', () => gsap.to(btn, { scale: 1.04, duration: 0.2, ease: 'power2.out' }));
+    btn.addEventListener('mouseleave', () => gsap.to(btn, { scale: 1, duration: 0.2, ease: 'power2.out' }));
+  });
+</script>
+
+<script>
   // ---- SKILLS DATA ----
   const skills = [
     { group: 'Languages', items: ['JavaScript','TypeScript','PHP','Java','Python','C','C++'] },
     { group: 'Frontend', items: ['Next.js','React','HTML5','CSS3','Tailwind CSS'] },
-    { group: 'Backend', items: ['Node.js','Express.js','Django','Laravel','REST API'] },
-    { group: 'Databases', items: ['MongoDB','MySQL','SQL'] },
-    { group: 'Auth & Security', items: ['JWT','bcrypt','OTP','Rate Limiting','XSS/CSRF Prevention','NoSQL Injection Prevention'] },
+    { group: 'Backend', items: ['Node.js','Express.js','NestJS (Basic)','Django','Laravel','REST API'] },
+    { group: 'Databases', items: ['MongoDB (TTL Indexes)','MySQL','SQL'] },
+    { group: 'Auth & Security', items: ['JWT','HttpOnly Cookies','bcrypt','OTP','Rate Limiting','XSS Prevention','CSRF Prevention','NoSQL Injection Prevention'] },
+    { group: 'ML / AI', items: ['scikit-learn','Keras','PyTorch','PCA','ADASYN','MLP','k-Fold CV','Feature Engineering','Model Evaluation','Deep Learning'] },
     { group: 'Data & BI', items: ['Tableau','Power BI','Pandas','NumPy','Matplotlib','Excel'] },
-    { group: 'ML / AI', items: ['scikit-learn','Keras','PyTorch','PCA','ADASYN','MLP','k-Fold CV'] },
-    { group: 'Tools', items: ['Git','DSA','OOP','System Design','Vercel','Netlify'] },
+    { group: 'CS Fundamentals', items: ['OOP','DSA','SDLC','DBMS','System Design','MIS'] },
+    { group: 'Cloud & DevOps', items: ['Git','GitHub','Docker (Basic)','GitHub Actions (Basic)','CI/CD (Basic)','Vercel','Netlify'] },
   ];
   const skillsGrid = document.getElementById('skillsGrid');
   skillsGrid.innerHTML = skills.map((s, i) => `
@@ -791,6 +1017,10 @@
       </div>
     </div>
   `).join('');
+  ScrollTrigger.batch('#skillsGrid > div', {
+    start: 'top 88%',
+    onEnter: batch => gsap.from(batch, { opacity: 0, y: 20, scale: 0.96, duration: 0.5, stagger: 0.08, ease: 'power2.out' })
+  });
 
   // ---- FEATURED PROJECTS DATA ----
   const projects = [
@@ -880,14 +1110,12 @@
 
   const codeIcon = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.52c0 4.98 3.23 9.2 7.72 10.69.56.1.76-.24.76-.54 0-.27-.01-1.16-.02-2.1-3.14.68-3.8-1.34-3.8-1.34-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.72 1.16 1.72 1.16 1 1.72 2.63 1.22 3.27.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.11 1.15a10.8 10.8 0 0 1 5.66 0c2.16-1.45 3.11-1.15 3.11-1.15.61 1.55.23 2.7.11 2.97.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.14 5.55.4.35.76 1.04.76 2.1 0 1.52-.01 2.74-.01 3.11 0 .3.2.65.77.54A11.03 11.03 0 0 0 23.02 11.5C23.02 5.24 18.27.5 12 .5Z"/></svg>`;
 
-  // resolve the single "primary" link a project card should open when clicked
   function projectPrimaryUrl(p){
     if (p.url) return p.url;
     if (p.repos && p.repos.length) return p.repos[0].url;
     return null;
   }
 
-  // ---- Render each project card (used inside the 3D carousel) ----
   function projectCardHTML(p, i){
     const primaryUrl = projectPrimaryUrl(p);
     return `
@@ -915,7 +1143,7 @@
     </div>`;
   }
 
-  // ---- 3D rotating drum carousel, driven by mouse wheel scroll ----
+  // ---- 3D rotating drum carousel, driven by mouse wheel scroll (now via GSAP tween instead of manual rAF lerp) ----
   (function initProjectsCarousel(){
     const wrap = document.getElementById('projectsCarouselWrap');
     const track = document.getElementById('projectsCarouselTrack');
@@ -925,24 +1153,24 @@
     const cardEls = Array.from(track.children);
     const n = cardEls.length;
 
-    let rot = 0;        // current rotation (degrees), animated
-    let targetRot = 0;  // rotation implied by accumulated scroll
-    let rafId = null;
+    // `state.rot` is tweened by GSAP; render() reads it on every tick via onUpdate.
+    const state = { rot: 0 };
+    let currentTween = null;
 
     function radius(){
-      // scale drum radius to the wrap's own width so it fits nicely at any breakpoint
       return Math.max(170, Math.min(320, wrap.clientWidth * 0.34));
     }
 
     function render(){
       const R = radius();
+      const rot = state.rot;
       cardEls.forEach((el, i) => {
         let angle = ((360 / n) * i + rot) % 360;
-        if (angle > 180) angle -= 360;   // normalize to -180..180
+        if (angle > 180) angle -= 360;
         const rad = angle * Math.PI / 180;
         const x = Math.sin(rad) * R;
-        const z = Math.cos(rad) * R - R;              // 0 at front, negative going back
-        const depth = (Math.cos(rad) + 1) / 2;         // 1 = front-most, 0 = back-most
+        const z = Math.cos(rad) * R - R;
+        const depth = (Math.cos(rad) + 1) / 2;
         const scale = 0.6 + 0.4 * depth;
         const opacity = 0.12 + 0.88 * depth;
         const blur = (1 - depth) * 4;
@@ -956,36 +1184,26 @@
       });
     }
 
-    function tick(){
-      rot += (targetRot - rot) * 0.14;
-      render();
-      if (Math.abs(targetRot - rot) > 0.05){
-        rafId = requestAnimationFrame(tick);
-      } else {
-        rot = targetRot;
-        render();
-        rafId = null;
-      }
-    }
-
-    function requestTick(){
-      if (!rafId) rafId = requestAnimationFrame(tick);
-    }
-
-    // Scroll (mouse wheel / trackpad) over the panel rotates the drum.
-    // Moving the mouse around no longer has any effect.
+    // Wheel over the panel rotates the drum — GSAP tween replaces the old manual
+    // `rot += (targetRot - rot) * 0.14` lerp loop with an equivalent eased tween.
     wrap.addEventListener('wheel', (e) => {
       e.preventDefault();
-      targetRot += e.deltaY * 0.4;
-      requestTick();
+      const targetRot = state.rot + e.deltaY * 0.4;
+      if (currentTween) currentTween.kill();
+      currentTween = gsap.to(state, {
+        rot: targetRot,
+        duration: 0.7,
+        ease: 'power3.out',
+        onUpdate: render,
+        overwrite: true
+      });
     }, { passive: false });
 
     window.addEventListener('resize', render);
     render();
 
-    // Click anywhere on a card (outside its inner links) to jump straight to its project link
     track.addEventListener('click', (e) => {
-      if (e.target.closest('a')) return; // let specific in-card links (live/source) behave normally
+      if (e.target.closest('a')) return;
       const card = e.target.closest('.project-card-3d');
       const href = card?.dataset.href;
       if (href) window.open(href, '_blank', 'noopener');
@@ -1008,6 +1226,10 @@
       </div>
     </a>
   `).join('');
+  ScrollTrigger.batch('#miniProjectsGrid > a', {
+    start: 'top 90%',
+    onEnter: batch => gsap.from(batch, { opacity: 0, y: 16, duration: 0.45, stagger: 0.07, ease: 'power2.out' })
+  });
 
   // ---- LIVE GITHUB FEED ----
   const GH_USER = 'dhrubotalukder1442';
@@ -1039,6 +1261,7 @@
           </div>
         </a>
       `).join('');
+      gsap.from('#repoGrid > a', { opacity: 0, y: 20, duration: 0.5, stagger: 0.08, ease: 'power2.out' });
     })
     .catch(err => {
       repoCount.textContent = 'unavailable';
