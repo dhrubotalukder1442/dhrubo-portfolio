@@ -281,6 +281,18 @@
     max-height:118px;
     overflow-y:auto;
   }
+
+  /* Only the front/active project is meant to be readable. */
+  .project-card-3d{
+    backface-visibility:hidden;
+    transform-origin:center center;
+    transition: opacity .25s ease, filter .25s ease, box-shadow .25s ease;
+  }
+  .project-card-3d.is-active{
+    box-shadow:
+      0 0 0 1px rgba(34,229,176,.22),
+      0 28px 90px rgba(0,0,0,.48);
+  }
   .carousel-hint{
     position:absolute;
     bottom:10px;
@@ -298,50 +310,6 @@
     .project-card-3d .feat-list{ max-height:96px; }
   }
 
-    /* Project carousel: preserve normal page scrolling while making the
-       project closest to the viewport center clearly readable. */
-    #projects .project-track {
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-    }
-    #projects .project-track::-webkit-scrollbar {
-      display: none;
-    }
-    #projects .project-card {
-      scroll-snap-align: center;
-      scroll-snap-stop: always;
-      isolation: isolate;
-      transition: transform 500ms cubic-bezier(.22,.61,.36,1),
-                  opacity 400ms ease,
-                  filter 400ms ease;
-      will-change: transform, opacity, filter;
-    }
-    #projects .project-card.is-active {
-      z-index: 20;
-      opacity: 1;
-      filter: none;
-      transform: scale(1.02);
-    }
-    #projects .project-card:not(.is-active) {
-      z-index: 1;
-      opacity: .62;
-      filter: saturate(.78) brightness(.78);
-    }
-    #projects .project-card.is-active .project-card-inner {
-      box-shadow: 0 0 0 1px rgba(34,229,176,.16),
-                  0 24px 80px rgba(0,0,0,.34);
-    }
-    @media (max-width: 767px) {
-      #projects .project-card.is-active {
-        transform: none;
-      }
-      #projects .project-card:not(.is-active) {
-        opacity: .82;
-        filter: none;
-      }
-    }
 
 </style>
 </head>
@@ -1229,23 +1197,50 @@
     function render(){
       const R = radius();
       const rot = state.rot;
+
+      // The card nearest 0deg is the active/front project.
+      // Keep the existing wheel-driven 3D rotation, but make only the
+      // front project fully readable so cards never visually collide.
+      let activeIndex = 0;
+      let smallestAngle = Infinity;
+
       cardEls.forEach((el, i) => {
         let angle = ((360 / n) * i + rot) % 360;
         if (angle > 180) angle -= 360;
+
+        const distance = Math.abs(angle);
+        if (distance < smallestAngle) {
+          smallestAngle = distance;
+          activeIndex = i;
+        }
+      });
+
+      cardEls.forEach((el, i) => {
+        let angle = ((360 / n) * i + rot) % 360;
+        if (angle > 180) angle -= 360;
+
         const rad = angle * Math.PI / 180;
         const x = Math.sin(rad) * R;
         const z = Math.cos(rad) * R - R;
         const depth = (Math.cos(rad) + 1) / 2;
-        const scale = 0.6 + 0.4 * depth;
-        const opacity = 0.12 + 0.88 * depth;
-        const blur = (1 - depth) * 4;
+        const isActive = i === activeIndex;
 
-        el.style.zIndex = Math.round(z + 1000);
+        // Active card is always crisp, centered and completely readable.
+        // Other cards remain part of the 3D rotation but become visual
+        // silhouettes rather than competing with the active card.
+        const scale = isActive ? 1 : 0.68 + 0.12 * depth;
+        const opacity = isActive ? 1 : (0.025 + 0.09 * depth);
+        const blur = isActive ? 0 : 2.8 + (1 - depth) * 2.2;
+
+        el.classList.toggle('is-active', isActive);
+        el.setAttribute('aria-current', isActive ? 'true' : 'false');
+
+        el.style.zIndex = isActive ? 5000 : Math.round(z + 1000);
         el.style.transform =
           `translate(-50%,-50%) translateX(${x.toFixed(1)}px) translateZ(${z.toFixed(1)}px) rotateY(${(angle * 0.55).toFixed(1)}deg) scale(${scale.toFixed(3)})`;
         el.style.opacity = opacity.toFixed(3);
         el.style.filter = blur > 0.15 ? `blur(${blur.toFixed(2)}px)` : 'none';
-        el.style.pointerEvents = Math.abs(angle) < 26 ? 'auto' : 'none';
+        el.style.pointerEvents = isActive ? 'auto' : 'none';
       });
     }
 
