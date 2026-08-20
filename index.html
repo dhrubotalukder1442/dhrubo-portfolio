@@ -297,6 +297,52 @@
     .projects-carousel-wrap{ height:480px; perspective:1200px; }
     .project-card-3d .feat-list{ max-height:96px; }
   }
+
+    /* Project carousel: preserve normal page scrolling while making the
+       project closest to the viewport center clearly readable. */
+    #projects .project-track {
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    #projects .project-track::-webkit-scrollbar {
+      display: none;
+    }
+    #projects .project-card {
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+      isolation: isolate;
+      transition: transform 500ms cubic-bezier(.22,.61,.36,1),
+                  opacity 400ms ease,
+                  filter 400ms ease;
+      will-change: transform, opacity, filter;
+    }
+    #projects .project-card.is-active {
+      z-index: 20;
+      opacity: 1;
+      filter: none;
+      transform: scale(1.02);
+    }
+    #projects .project-card:not(.is-active) {
+      z-index: 1;
+      opacity: .62;
+      filter: saturate(.78) brightness(.78);
+    }
+    #projects .project-card.is-active .project-card-inner {
+      box-shadow: 0 0 0 1px rgba(34,229,176,.16),
+                  0 24px 80px rgba(0,0,0,.34);
+    }
+    @media (max-width: 767px) {
+      #projects .project-card.is-active {
+        transform: none;
+      }
+      #projects .project-card:not(.is-active) {
+        opacity: .82;
+        filter: none;
+      }
+    }
+
 </style>
 </head>
 <body class="antialiased">
@@ -1052,7 +1098,7 @@
       repos: [
         { label: 'Source', url: 'https://github.com/dhrubotalukder1442/SkillForge' },
       ],
-      tech: ['Next.js','TypeScript','NestJS','FastAPI','Python','spaCy','scikit-learn','Gemini','TypeORM','Docker'],
+      tech: ['Next.js','TypeScript','NestJS','FastAPI','Python','spaCy','scikit-learn','Prompt Engineering','Google Gemini','TypeORM','Docker'],
       features: [
         'AI-powered resume analysis using pdfplumber and spaCy PhraseMatcher to extract skills with tokenizer-aware matching',
         'GitHub profile analysis that scans public repositories, languages, and topics to discover additional skills',
@@ -1292,5 +1338,62 @@
       console.error(err);
     });
 </script>
+
+<script>
+(function () {
+  const section = document.querySelector('#projects');
+  if (!section) return;
+
+  const track = section.querySelector('.project-track');
+  if (!track) return;
+
+  const cards = Array.from(track.querySelectorAll('.project-card'));
+  if (!cards.length) return;
+
+  let ticking = false;
+
+  function updateActiveProject() {
+    const trackRect = track.getBoundingClientRect();
+    const centerX = trackRect.left + trackRect.width / 2;
+
+    let closest = null;
+    let closestDistance = Infinity;
+
+    cards.forEach((card) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const distance = Math.abs(cardCenter - centerX);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closest = card;
+      }
+    });
+
+    cards.forEach((card) => {
+      card.classList.toggle('is-active', card === closest);
+      card.setAttribute('aria-current', card === closest ? 'true' : 'false');
+    });
+
+    ticking = false;
+  }
+
+  function requestUpdate() {
+    if (!ticking) {
+      requestAnimationFrame(updateActiveProject);
+      ticking = true;
+    }
+  }
+
+  track.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate, { passive: true });
+  window.addEventListener('load', requestUpdate);
+
+  // Do not prevent wheel/touch events. This keeps the page's existing
+  // vertical scroll behavior intact.
+  updateActiveProject();
+})();
+</script>
+
 </body>
 </html>
